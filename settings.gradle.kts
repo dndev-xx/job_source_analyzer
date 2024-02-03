@@ -1,0 +1,1 @@
+rootProject.name = "job_source_analyzer"
