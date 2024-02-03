@@ -1,0 +1,232 @@
+openapi: 3.0.1
+info:
+  title: "job source analyzer"
+  description: this is a microservice application for collecting information about job vacancies, analyzing them and transferring the data to the client
+  license:
+    name: MIT
+    url: https://github.com/dndev-xx/job_source_analyzer/blob/master/LICENSE
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:55555/api/v1
+tags:
+  - name: searching vacancy
+paths:
+  /jsa/start-search:
+    get:
+      tags:
+        - v1/api
+      summary: collection data of vacancy
+      operationId: cdvSearch
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CdvStartingResponse'
+
+components:
+    schemas:
+      CdvRequest:
+        type: object
+        description: base interface for all request
+        properties:
+          requestType:
+            type: string
+            description: field discriminator for calculate type of request
+            example: start-search
+          requestId:
+            type: string
+            description: field of debug request ID
+        discriminator:
+          propertyName: requestType
+          mapping:
+            start: '#/components/schemas/CdvStartingRequest'
+
+      Error:
+        type: object
+        properties:
+          code:
+            type: string
+          group:
+            type: string
+          field:
+            type: string
+          message:
+            type: string
+
+      ResponseResult:
+        type: string
+        enum:
+          - success
+          - error
+
+      CdvResponse:
+        type: object
+        description: base interface for all response
+        properties:
+          responseType:
+            type: string
+            description: field discriminator for calculate type of response
+            example: searching
+          requestId:
+            type: string
+            description: field of debug request ID
+          result:
+            $ref: '#/components/schemas/ResponseResult'
+          errors:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+
+      CdvPermissions:
+        type: string
+        description: permissions for operations
+        enum:
+          - start
+
+      CdvLock:
+        type: string
+        description: version optimistic block
+
+      CdvId:
+        type: string
+        description: debug id
+
+      Salary:
+        type: object
+        description: object describes properties salary of vacancy
+        properties:
+          from:
+            type: integer
+          to:
+            type: integer
+          currency:
+            type: string
+          gross:
+            type: boolean
+
+      Address:
+        type: object
+        description: object describes properties address of vacancy
+        properties:
+          city:
+            type: string
+          street:
+            type: string
+          lat:
+            type: number
+          lng:
+            type: number
+          raw:
+            type: string
+
+      Employer:
+        type: object
+        description: object describes properties employer of vacancy
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          url:
+            type: string
+
+      Contact:
+        type: object
+        description: object describes properties employer of vacancy
+        properties:
+          email:
+            type: string
+          number:
+            type: string
+
+      BaseCdv:
+        type: object
+        description: object describes properties vacancy
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          area:
+            type: string
+          salary:
+            $ref: '#/components/schemas/Salary'
+          address:
+            $ref: '#/components/schemas/Address'
+          published:
+            type: object
+          created:
+            type: object
+          url:
+            type: string
+          employer:
+            $ref: '#/components/schemas/Employer'
+          snippet:
+            type: string
+          contact:
+            $ref: '#/components/schemas/Contact'
+          schedule:
+            type: string
+          experience:
+            type: string
+
+      CdvResponseObject:
+        allOf:
+          - $ref: '#/components/schemas/BaseCdv'
+          - type: object
+            description: object for response to the client app
+
+      CdvResponseData:
+        allOf:
+          - type: object
+            description: response with multi object
+            properties:
+              id:
+                $ref: '#/components/schemas/CdvId'
+              lock:
+                $ref: '#/components/schemas/CdvLock'
+              permissions:
+                type: array
+                uniqueItems: true
+                items:
+                  $ref: '#/components/schemas/CdvPermissions'
+              cdv:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CdvResponseObject'
+
+      CdvStartingResponse:
+        allOf:
+          - $ref: '#/components/schemas/CdvResponse'
+          - $ref: '#/components/schemas/CdvResponseData'
+
+      # WORK MODE
+      CdvRequestDebugMode:
+        type: string
+        enum:
+          - prod
+          - test
+          - stub
+
+      CdvRequestDebug:
+        type: object
+        properties:
+          debug:
+            $ref: '#/components/schemas/CdvDebug'
+
+      CdvDebug:
+        type: object
+        properties:
+          mode:
+            $ref: '#/components/schemas/CdvRequestDebugMode'
+          stub:
+            $ref: '#/components/schemas/CdvRequestDebugStubs'
+
+      CdvRequestDebugStubs:
+        type: string
+        description: lists of all stubs
+        enum:
+          - success
+          - server is failed
