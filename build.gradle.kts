@@ -1,10 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm")
     id("checkstyle")
-}
-
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
 }
 
 allprojects {
@@ -16,6 +12,7 @@ allprojects {
         }
     }
 }
+
 subprojects {
     group = "ru.jsa"
     version = "1.0.0"
