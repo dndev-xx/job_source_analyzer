@@ -39,9 +39,9 @@ components:
             type: string
             description: field of debug request ID
         discriminator:
-          propertyName: requestType
+          propertyName: "beg"
           mapping:
-            start: '#/components/schemas/CdvStartingRequest'
+            starting: '#/components/schemas/CdvSearchingRequest'
 
       Error:
         type: object
@@ -78,6 +78,10 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Error'
+        discriminator:
+          propertyName: requestType
+          mapping:
+            start: '#/components/schemas/CdvStartingResponse'
 
       CdvPermissions:
         type: string
@@ -92,6 +96,13 @@ components:
       CdvId:
         type: string
         description: debug id
+
+      CdvVisibility:
+        type: string
+        description: 'request for internal or external use'
+        enum:
+          - internal
+          - public
 
       Salary:
         type: object
@@ -178,6 +189,21 @@ components:
           - type: object
             description: object for response to the client app
 
+      CdvSchedule:
+        enum:
+          - low
+          - standard
+          - high
+
+      CdvSearchingObject:
+        allOf:
+          - type: object
+            properties:
+              schedule:
+                $ref: '#/components/schemas/CdvSchedule'
+              visibility:
+                $ref: '#/components/schemas/CdvVisibility'
+
       CdvResponseData:
         allOf:
           - type: object
@@ -199,8 +225,22 @@ components:
 
       CdvStartingResponse:
         allOf:
+          - type: object
+            description: response with multi object
+            properties:
+                whereExecuteSearching:
+                  $ref: '#/components/schemas/typeLink'
           - $ref: '#/components/schemas/CdvResponse'
           - $ref: '#/components/schemas/CdvResponseData'
+
+      CdvSearchingRequest:
+        allOf:
+          - $ref: '#/components/schemas/CdvRequest'
+          - $ref: '#/components/schemas/CdvRequestDebug'
+          - type: object
+            properties:
+              cdv:
+                $ref: '#/components/schemas/CdvSearchingObject'
 
       # WORK MODE
       CdvRequestDebugMode:
@@ -230,3 +270,22 @@ components:
         enum:
           - success
           - server is failed
+
+      TypeRequest:
+        description: type request
+        enum:
+          - GET
+          - POST
+          - DELETE
+          - HEAD
+          - PUT
+          - CONNECT
+          - OPTIONS
+          - TRACE
+          - PATCH
+
+      typeLink:
+        description: type link
+        enum:
+          - HH
+          - HABR
