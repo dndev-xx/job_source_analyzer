@@ -1,0 +1,4 @@
+app:
+  hh: https://api.hh.ru/vacancies?
+  habr: https://career.habr.com/vacancies?
+  schedule: 60

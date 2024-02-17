@@ -10,6 +10,7 @@ fun fetchDataFromSourceHH(source: String): HHModelApi? {
         val client = OkHttpClient()
         val request = Request.Builder()
             .url(source)
+            .get()
             .build()
 
         client.newCall(request).execute().use { response ->
