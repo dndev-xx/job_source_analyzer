@@ -1,4 +1,4 @@
-package org.example.model
+package org.example.source
 
 data class JobSource(val source: String, var workType: WorkType) {
 

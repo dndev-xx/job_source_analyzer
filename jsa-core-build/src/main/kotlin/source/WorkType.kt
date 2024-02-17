@@ -1,4 +1,4 @@
-package org.example.model
+package org.example.source
 
 data class WorkType(val type: String, val duration: Int) {
     companion object {
