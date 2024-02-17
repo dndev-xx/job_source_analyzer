@@ -15,3 +15,4 @@ plugins {
 include("jsa-jackson-mapper")
 include("jsa-context-common")
 include("jsa-core-build")
+include("jsa-config-server")
