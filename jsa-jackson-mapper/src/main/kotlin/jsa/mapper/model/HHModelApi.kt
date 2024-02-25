@@ -45,11 +45,16 @@ data class Experience@JsonCreator constructor(
     @JsonProperty("name") val name: String?
 )
 
+data class Department@JsonCreator constructor(
+    @JsonProperty("id") val id: String?,
+    @JsonProperty("name") val name: String?
+)
+
 data class ItemHH@JsonCreator constructor(
     @JsonProperty("id") val id: String?,
     @JsonProperty("premium") val premium: Boolean,
     @JsonProperty("name") val name: String?,
-    @JsonProperty("department") val department: String?,
+    @JsonProperty("department") val department: Department?,
     @JsonProperty("area") val area: Area,
     @JsonProperty("salary") val salary: Salary?,
     @JsonProperty("address") val address: Address?,

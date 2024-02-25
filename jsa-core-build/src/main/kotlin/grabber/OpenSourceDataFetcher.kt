@@ -4,6 +4,7 @@ import jsa.mapper.apiV1RequestHHJsonForObject
 import jsa.mapper.model.HHModelApi
 import jsa.mapper.model.HabrModelApi
 import jsa.mapper.model.ItemHabr
+import kotlinx.coroutines.CoroutineExceptionHandler
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jsoup.Connection
@@ -12,37 +13,48 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-fun fetchDataFromSourceHH(source: String): HHModelApi? {
-    if (isValidSourceFormat(source)) {
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url(source)
-            .get()
-            .build()
+suspend fun fetchDataFromSourceHH(url: String): HHModelApi? {
+    return withContext(Dispatchers.IO + coroutineExceptionHandler) {
+        if (isValidSourceFormat(url)) {
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(url)
+                .get()
+                .build()
 
-        client.newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                return responseBody?.let { apiV1RequestHHJsonForObject(it) }
-            } else {
-                println("Request failed: ${response.code}")
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    return@withContext responseBody?.let { apiV1RequestHHJsonForObject(it) }
+                } else {
+                    println("Request failed: ${response.code}")
+                }
             }
+        } else {
+            println("Invalid source format. Source must match the pattern: https://api.hh.ru/vacancies?text=java&page=1&per_page=1")
         }
-    } else {
-        println("Invalid source format. Source must match the pattern: https://api.hh.ru/vacancies?text=java&page=1&per_page=1")
+        null
     }
-    return null
 }
 
-fun fetchDataFromSourceHABR(source: String): HabrModelApi {
-    val rsl = HabrModelApi(ArrayList())
-    val connection: Connection = Jsoup.connect(source) // "https://career.habr.com/vacancies?page=1&q=java&type=all"
-    val document: Document = connection.get()
-    val descriptionElements: Elements? = document.getElementsByAttributeValue("class", "vacancy-card__inner")
-    descriptionElements!!.forEach {getSourceElementFromHabr(it).let { item -> rsl.items.add(item)}
+suspend fun fetchDataFromSourceHABR(source: String): HabrModelApi {
+    return withContext(Dispatchers.IO + coroutineExceptionHandler) {
+        val rsl = HabrModelApi(ArrayList())
+        val connection: Connection = Jsoup.connect(source) // "https://career.habr.com/vacancies?page=1&q=java&type=all"
+        val document: Document = connection.get()
+        val descriptionElements: Elements? = document.getElementsByAttributeValue("class", "vacancy-card__inner")
+        descriptionElements!!.forEach {
+            getSourceElementFromHabr(it).let { item -> rsl.items.add(item) }
+        }
+        return@withContext rsl
     }
-    return rsl
+}
+
+private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+    println("Caught $exception")
 }
 private fun getSourceElementFromHabr(elem: Element): ItemHabr {
     val title: Element? = elem.selectFirst(".vacancy-card__title")

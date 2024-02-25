@@ -10,6 +10,7 @@ dependencies {
     val jsoupVersion: String by project
 
     implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation(project(":jsa-jackson-mapper"))
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("org.jsoup:jsoup:$jsoupVersion")
