@@ -8,9 +8,6 @@ pluginManagement {
         id("org.openapi.generator") version openapiVersion apply false
     }
 }
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-}
 
 include("jsa-jackson-mapper")
 include("jsa-context-common")

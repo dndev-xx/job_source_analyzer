@@ -5,13 +5,12 @@ data class ItemHabr(
     val title: String?,
     val salary: String?,
     val description: String?,
-    val requirements: String?,
     val created: String?,
     val location: String?,
     val link: String?,
-    val contacts: String?,
+    val contacts: String?
 )
 
 data class HabrModelApi(
-    val items: List<ItemHabr>
+    val items: ArrayList<ItemHabr>
 )
