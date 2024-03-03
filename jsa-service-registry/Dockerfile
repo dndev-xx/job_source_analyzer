@@ -16,7 +16,7 @@ COPY --from=builder /workspace/build/libs/*.jar app.jar
 
 COPY src/main/resources/application.yml /app/application.yml
 
-ENV PORT 8080
-EXPOSE 8080
+ENV PORT 8761
+EXPOSE 8761
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
