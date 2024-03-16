@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("checkstyle")
     id("org.springframework.boot") version "3.2.2"
     id("io.spring.dependency-management") version "1.1.4"
 }
@@ -25,4 +26,8 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<Checkstyle> {
+    configFile = file("${rootDir}/configuration/checkstyle/checkstyle.xml")
 }
