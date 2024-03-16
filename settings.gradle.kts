@@ -5,6 +5,7 @@ pluginManagement {
     val openapiVersion: String by settings
     plugins {
         kotlin("jvm") version kotlinVersion apply false
+        kotlin("plugin.spring") version kotlinVersion apply false
         id("org.openapi.generator") version openapiVersion apply false
     }
 }
@@ -14,5 +15,8 @@ plugins {
 
 include("jsa-jackson-mapper")
 include("jsa-context-common")
-include("jsa-core-build")
 include("jsa-config-server")
+include("jsa-core-build")
+include("jsa-service-registry")
+include("jsa-api-gateway")
+include("docker-builder")
