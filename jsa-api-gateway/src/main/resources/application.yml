@@ -16,3 +16,8 @@ spring:
         max-interval: 10000
         multiplier: 2
         max-attempts: 10
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

@@ -2,6 +2,12 @@ version: '3.8'
 
 services:
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
   clickhouse:
     image: clickhouse/clickhouse-server:22.8
     ports:
